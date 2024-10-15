@@ -1,0 +1,25 @@
+server:
+  port: 9000
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'  # Expose all actuator endpoints
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: example_route
+          uri: http://localhost:8888
+          predicates:
+            - Path=/example/**  # This will match the incoming request
+          filters:
+            - RewritePath=/example/(?<segment>.*), /${segment}  # This rewrites the path
