@@ -23,3 +23,10 @@ spring:
             - Path=/example/**  # This will match the incoming request
           filters:
             - RewritePath=/example/(?<segment>.*), /${segment}  # This rewrites the path
+
+        - id: rdns_route
+          uri: http://localhost:8888  # Base URI of the target service
+          predicates:
+            - Path=/ipm/rdns  # Match incoming requests
+          filters:
+            - RewritePath=/ipm/rdns, /rdns/uploadzone  # Forward to the correct endpoint
