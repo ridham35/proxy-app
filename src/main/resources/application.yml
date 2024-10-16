@@ -1,32 +1,52 @@
-server:
-  port: 9000
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: DEBUG
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'  # Expose all actuator endpoints
-
-
 spring:
+  application:
+    name: http-proxy-service
   cloud:
     gateway:
       routes:
-        - id: example_route
-          uri: http://localhost:8888
+        - id: rpcipv4
+          uri: http://sbhomta11.vzbi.com:8008/ipm-webservices/ipv4Service?wsdl
           predicates:
-            - Path=/example/**  # This will match the incoming request
+            - Path=/ipm/consumer/soap/rpc/ipv4/**
           filters:
-            - RewritePath=/example/(?<segment>.*), /${segment}  # This rewrites the path
-
-        - id: rdns_route
-          uri: http://localhost:8888  # Base URI of the target service
+            - StripPrefix=2
+        - id: rpcipv6
+          uri: http://sbhomta11.vzbi.com:8008/ipv6-webservice/ipv6Service?WSDL
           predicates:
-            - Path=/ipm/rdns  # Match incoming requests
+            - Path=/ipm/consumer/soap/rpc/ipv6/**
           filters:
-            - RewritePath=/ipm/rdns, /rdns/uploadzone  # Forward to the correct endpoint
+            - StripPrefix=2
+        - id: wsipv4
+          uri: http://sbhomta11.vzbi.com:8008/IpmServiceEJB/ipv4JAXWSService?wsdl
+          predicates:
+            - Path=/ipm/consumer/soap/ws/ipv4/**
+          filters:
+            - StripPrefix=2
+        - id: wsipv6
+          uri: http://sbhomta11.vzbi.com:8008/IpmServiceEJB/ipv6JAXWSService?wsdl
+          predicates:
+            - Path=/ipm/consumer/soap/ws/ipv6/**
+          filters:
+            - StripPrefix=2
+        - id: rdns
+          uri: http://sbhomta11.vzbi.com:8089/rdns/uploadzone
+          predicates:
+            - Path=/ipm/rdns/**
+          filters:
+            - StripPrefix=2
+        - id: rpcipv4proxy
+          uri: https://inam-qa-sso.ebiz.verizon.com/ipm/consumer/soap/rpc/ipv4Service?wsdl
+          predicates:
+            - Path=/ipm/consumer/soap/rpc/proxy/ipv4/**
+          filters:
+            - StripPrefix=2
+        - id: rpcipv6proxy
+          uri: https://inam-qa-sso.ebiz.verizon.com/ipm/consumer/soap/rpc/ipv6Service?wsdl
+          predicates:
+            - Path=/ipm/consumer/soap/rpc/proxy/ipv6/**
+          filters:
+            - StripPrefix=2
+        - id: wsipv4proxy
+          uri: https://inam-qa-sso.ebiz.verizon.com/ipm/consumer/soap/ws/ipv4Service?wsdl
+          predicates:
+            - Path
